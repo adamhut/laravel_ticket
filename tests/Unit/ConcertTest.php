@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Concert;
 use Carbon\Carbon;
 use Tests\TestCase;
+use App\Exceptions\NotEnoughTicketsException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -69,13 +70,72 @@ class ConcertTest extends TestCase
     /** @test */
     public function can_order_concert_tickets()
     {
-        $concert = factory(Concert::class)->create();
+        $concert = factory(Concert::class)->create()->addTickets(3);
+        
 
         $order = $concert->orderTickets('jane@example.com',3);
 
         $this->assertEquals('jane@example.com', $order->email);
-        $this->assertEquals(3, $order->tickets()->count());
 
+        $this->assertEquals(3, $order->ticketQuantity());
+    }
 
+    /** @test */
+    public function can_add_ticket()
+    {
+        $concert = factory(Concert::class)->create();
+
+        $concert->addTickets(50);
+
+        $this->assertEquals(50,$concert->ticketsRemaining());
+
+    }
+
+    /** @test */
+    public function ticket_remaining_does_not_include_ticket_associated_with_an_order()
+    {
+        $concert = factory(Concert::class)->create()->addTickets(50);
+
+        $order = $concert->orderTickets('jane@example.com',30);
+
+        $this->assertEquals(20, $concert->ticketsRemaining());
+
+    }
+
+    /** @test */
+    public function trying_to_order_more_ticket_than_remain_throw_exception()
+    {
+        $this->withExceptionHandling();
+
+        $concert = factory(Concert::class)->create()->addTickets(10);
+
+        try{
+            $order = $concert->orderTickets('jane@example.com',11);
+        }catch(NotEnoughTicketsException $e) {
+            $this->assertFalse($concert->hasOrderFor('jane@example.com'));
+            $this->assertEquals(10,$concert->ticketsRemaining()); 
+            return ;
+        }
+
+        $this->fail('order successed even though there were not enough tickets remianing.');
+    }
+
+    /** @test */
+    public function can_not_order_ticket_that_already_been_purchased()
+    {
+        $this->withExceptionHandling();
+        $concert = factory(Concert::class)->create()->addTickets(10);
+        
+        $concert->orderTickets('jane@example.com',8);
+      
+        try{
+            $concert->orderTickets('john@example.com',3);
+        }catch(NotEnoughTicketsException $e) {
+            $this->assertFalse($concert->hasOrderFor('john@example.com'));
+            $this->assertEquals(2,$concert->ticketsRemaining()); 
+            return ;
+        }
+
+        $this->fail('order successed even though there were not enough tickets remianing.');
     }
 }
