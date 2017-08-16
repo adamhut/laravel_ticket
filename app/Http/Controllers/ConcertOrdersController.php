@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Order;
 use App\Concert;
+use App\Reservation;
 use Illuminate\Http\Request;
 use App\Billing\PaymentGateway;
 use App\Billing\FakePaymentGateway;
@@ -55,18 +57,22 @@ class ConcertOrdersController extends Controller
         ]);
 
         try {
+            //find some tickets
+            $tickets=$concert->findTickets(request('ticket_quantity'));
 
-            //Creating the Order
-            $order = $concert->orderTickets(request('email'),request('ticket_quantity'));
-
-            //Charging the customer
-            $amount = request('ticket_quantity') * $concert->ticket_price;            
+            //Charge the customer for the tickets
+            $reservation = new Reservation($tickets);
+            $amount = $reservation->totalCost();    
+            // /$amount = $tickets->sum('price');       
             $this->paymentGateway->charge($amount,request('payment_token'));
 
+            //create an order for those Tickets
+            //$order = $concert->createOrder(request('email'),$tickets);
+            $order  = Order::forTickets($tickets,request('email'),$amount);
 
-            return response()->json([],201);
+            return response()->json($order,201);
         } catch (PaymentFailedException $e) {
-            $order->cancel();
+            //$order->cancel();
             return response()->json([],422);
         }catch(NotEnoughTicketsException $e) {
             return response()->json([],422);
