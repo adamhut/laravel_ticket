@@ -28,7 +28,9 @@ class PurchaseTicketsTest extends TestCase
 
     private function orderTickets($concert,$params)
     {
+        $savedRequest = $this->app['request'];
         $this->response = $this->json('POST',"/concerts/{$concert->id}/orders",$params);   
+        $this->app['request']=$savedRequest;
     }
 
     private function assertValidationError($field)
@@ -219,13 +221,57 @@ class PurchaseTicketsTest extends TestCase
             'payment_token' => $this->paymentGateway->getValidTestToken(),
         ]);
 
-        $this->response->assertStatus(422);
-        
-        
+        $this->response->assertStatus(422);    
         $this->assertFalse($concert->hasOrderFor('john@example.com'));
         $this->assertEquals(0,$this->paymentGateway->totalCharges());
 
         $this->assertEquals(50,$concert->ticketsRemaining());
+    }
+
+    /** @test */
+    public function cannot_purchase_tickets_andother_customer_is_already_trying_to_purchase()
+    {
+
+        $concert = factory(Concert::class)->states('published')->create([
+                'ticket_price' => 1200
+            ])->addTickets(3);  
+
+        $this->paymentGateway->beforeFirstCharge(function($paymentGateway) use($concert){
+           
+            $this->orderTickets($concert,[
+                'email' => 'personB@example.com',
+                'ticket_quantity' => 1,
+                'payment_token' => $this->paymentGateway->getValidTestToken(),
+            ]);
+
+            $this->response->assertStatus(422); 
+            $this->assertFalse($concert->hasOrderFor('personB@example.com'));
+            $this->assertEquals(0,$this->paymentGateway->totalCharges());
+
+        });
+
+        //Find ticekts for person A
+        $this->orderTickets($concert,[
+            'email' => 'personA@example.com',
+            'ticket_quantity' => 3,
+            'payment_token' => $this->paymentGateway->getValidTestToken(),
+        ]);
+                                        //Find ticekts for person b
+                                        //Attempt to charge person B
+                                        //Create an order for person B
+        
+        //Attempt to charge person A
+        //Create an order for person A
+        $this->assertEquals(3600,$this->paymentGateway->totalCharges());
+
+        //Make sure that an order existes for this customer
+        //dd($concert->orders()->first()->toArray());
+        $this->assertTrue($concert->hasOrderFor('personA@example.com'));
+
+        $this->assertEquals(3,$concert->ordersFor('personA@example.com')->first()->ticketQuantity());
+
+        
+
     }
 
 }

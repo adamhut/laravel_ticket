@@ -34,4 +34,39 @@ class FakePaymentGatewayTest extends TestCase
 
     	$this->fail();
     }
+
+    /** @test */
+    public function running_a_hook_before_the_first_charge()
+    {
+        $paymentGateway = new FakePaymentGateway;
+        $callbackRan = false;
+
+        $paymentGateway->beforeFirstCharge(function($paymentGateway) use(&$callbackRan){
+            $callbackRan=true;
+            $this->assertEquals(0, $paymentGateway->totalCharges());
+        });
+
+        $paymentGateway->charge(2500,$paymentGateway->getValidTestToken());
+        $this->assertTrue($callbackRan);
+
+        $this->assertEquals(2500, $paymentGateway->totalCharges());
+    }
+
+    /** @test */
+    public function running_a_hook_only_once()
+    {
+        $paymentGateway = new FakePaymentGateway;
+        $timesCallbackRan = 0;
+
+        $paymentGateway->beforeFirstCharge(function($paymentGateway) use(&$callbackRan){
+            $paymentGateway->charge(2500,$paymentGateway->getValidTestToken());
+            $callbackRan++;
+            $this->assertEquals(2500, $paymentGateway->totalCharges());
+        });
+
+        $paymentGateway->charge(2500,$paymentGateway->getValidTestToken());
+        $this->assertEquals(1,$timesCallbackRan);
+
+        $this->assertEquals(5000, $paymentGateway->totalCharges());
+    }
 }
