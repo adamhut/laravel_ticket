@@ -124,6 +124,7 @@ class PurchaseTicketsTest extends TestCase
         //$order=$concert->orders()->where('email','john@example.com')->first();
 
         $this->assertFalse($concert->hasOrderFor('john@example.com'));
+        $this->assertEquals(3, $concert->ticketsRemaining());
 
     }
 

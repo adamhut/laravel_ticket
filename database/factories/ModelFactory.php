@@ -48,10 +48,7 @@ $factory->define(App\Ticket::class, function (Faker\Generator $faker) {
         'concert_id' => function(){
             return factory(App\Concert::class)->create()->id;
         },
-        'order_id' => 'with The fake Openers',
-        'reserve_at' => Carbon::parse('+2 weeks'),
         
-
     ];
 });
 
@@ -67,4 +64,9 @@ $factory->state(App\Concert::class,'unpublished', function($faker){
     ];
 });
 
+$factory->state(App\Ticket::class,'reserved', function($faker){
+    return [
+        'reserved_at' => Carbon::now(),
+    ];
+});
 
