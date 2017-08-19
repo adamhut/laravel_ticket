@@ -22,8 +22,10 @@ class Order extends Model
             $order->tickets()->save($ticket);
         }
 
-        return $order;   
+        return $order;
     }
+
+
 
     public function tickets()
     {
@@ -33,7 +35,7 @@ class Order extends Model
     /*
     public function cancel()
     {
-		foreach($this->tickets as $ticket)    		
+		foreach($this->tickets as $ticket)
 		{
 			$ticket->release();
 		}

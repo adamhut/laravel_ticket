@@ -1,7 +1,7 @@
-<?php 
+<?php
 namespace App;
 
-class Reservation 
+class Reservation
 {
 	protected $tickets;
 	protected $email;
@@ -12,9 +12,15 @@ class Reservation
 		$this->email = $email;
 	}
 
-	
+	public function complete($paymentGateway,$paymentToken)
+	{
+		$paymentGateway->charge($this->totalCost(),$paymentToken);
+
+		return Order::forTickets($this->tickets(),$this->email(), $this->totalCost());
+	}
+
 	public function totalCost()
-	{	
+	{
 		return $this->tickets->sum('price')	;
 	}
 
@@ -23,7 +29,7 @@ class Reservation
 		$this->tickets->each(function($ticket){
 			$ticket->release();
 		});
-		return ;  
+		return ;
 	}
 
 	public function tickets()
