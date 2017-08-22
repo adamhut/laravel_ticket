@@ -2,6 +2,7 @@
 namespace App\Billing;
 
 use Stripe\Charge;
+use Stripe\Error\InvalidRequest;
 
 
 class StripePaymentGateway implements PaymentGateway
@@ -18,12 +19,32 @@ class StripePaymentGateway implements PaymentGateway
 
     public function charge($amount,$token)
     {
-        $result = Charge::create([
-            "amount" => $amount,
-            "currency" => "usd",
-            "source" => $token, // obtained with Stripe.js
-            //"description" => "Charge for matthew.smith@example.com"
-        ],$this->apiKey);
-
+        try{
+            $result = Charge::create([
+                "amount" => $amount,
+                "currency" => "usd",
+                "source" => $token, // obtained with Stripe.js
+                //"description" => "Charge for matthew.smith@example.com"
+            ],$this->apiKey);
+        }catch(InvalidRequest $e)
+        {
+            throw new PaymentFailedException;
+        }
     }
+
+    /*
+    public function chargeWithGuzzle($amount,$token)
+    {
+        (new \GuzzleHttp\Client)->post('https:\\api.stripe.com/v1/charges',[
+            'header' => [
+                'Authorization' => "Bearer {$this->apiKey}",
+            ],
+            'form_params' => [
+                'amount' =>  $amount,
+                'source' => $token,
+                'currency' => 'usd'
+            ],
+        ]);
+    }
+    */
 }

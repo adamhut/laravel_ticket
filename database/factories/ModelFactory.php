@@ -36,7 +36,7 @@ $factory->define(App\Concert::class, function (Faker\Generator $faker) {
         'venue_address' => '123 example Lane',
         'city' => 'Fakeville',
         'state' => 'ON',
-        'zipcode' => '90210',
+        'zip' => '90210',
         'additional_information' => 'Some sample Additional information.',
 
     ];
