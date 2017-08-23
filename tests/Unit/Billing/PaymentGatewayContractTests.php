@@ -1,0 +1,73 @@
+<?php
+
+namespace Tests\Unit\Billing;
+
+use App\Billing\PaymentFailedException;
+
+trait PaymentGatewayContractTests
+{
+
+	abstract protected function getPaymentGateway();
+    
+	/** @test */
+    public function charges_with_a_valid_payment_token_are_successful()
+    {
+        //Create a stripePaymentGateway
+        $paymentGateway = $this->getPaymentGateway();
+        //$charge = $paymentGateway->lastCharge();
+        //Create a new carge for some amount using a valid token
+        // /$paymentGateway->charge(2500,$paymentGateway->getValidTestToken());
+
+        $newCharges = $paymentGateway->newChargesDuring(function($paymentGateway){
+            $paymentGateway->charge(2500,$paymentGateway->getValidTestToken());
+        });
+
+        $this->assertCount(1, $newCharges);
+        $this->assertEquals(2500,$newCharges->sum());
+
+        //Verify that the charge was completed successfull
+        //$this->assertCount(1, $this->newCharges($this->lastCharge));
+        //$this->assertCount(1, $this->newCharges());
+        //$this->assertEquals(2500,$this->lastCharge()->amount);
+    }
+
+    /** @test */
+    public function charges_with_invalid_payment_token_fail()
+    {
+    
+	    $paymentGateway = $this->getPaymentGateway();
+	    //$paymentGateway->charge(2500,'invalid-payment-token');
+        
+        $newCharges = $paymentGateway->newChargesDuring(function($paymentGateway){
+            try {
+                $paymentGateway->charge(2500,'invalid-payment-token');
+            
+        	} catch (PaymentFailedException $e) {
+        		//$this->assertEquals(2500, actual);
+        		return ;
+        	}
+            $this->fail('charging with invalid payment token did not throw a PaymentFailedException');
+        });
+        
+        $this->assertCount(0, $newCharges);
+    	
+    }
+
+   
+    public function can_fetch_charges_created_during_a_callback()
+    {
+        $paymentGateway = $this->getPaymentGateway();
+        $paymentGateway->charge(2000,$paymentGateway->getValidTestToken());
+        $paymentGateway->charge(3000,$paymentGateway->getValidTestToken());
+
+        $newCharges = $paymentGateway->newChargesDuring(function($paymentGateway){
+            $paymentGateway->charge(4000,$paymentGateway->getValidTestToken());
+            $paymentGateway->charge(5000,$paymentGateway->getValidTestToken());
+        });
+
+        $this->assertCount(2, $newCharges);
+        $this->assertEquals([5000,4000],$newCharges->all());
+    }
+
+
+}
