@@ -23,7 +23,6 @@ class PurchaseTicketsTest extends TestCase
 
         $this->paymentGateway = new FakePaymentGateway;
         $this->app->instance(PaymentGateway::class,$this->paymentGateway);
-
     }
 
     private function orderTickets($concert,$params)

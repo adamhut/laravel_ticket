@@ -28,6 +28,9 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 $factory->define(App\Concert::class, function (Faker\Generator $faker) {
 
     return [
+        'user_id' => function () {
+            return factory(App\User::class)->create()->id;
+        },
         'title' => 'Example Band',
         'subtitle' => 'with The fake Openers',
         'date' => Carbon::parse('+2 weeks'),
@@ -39,6 +42,7 @@ $factory->define(App\Concert::class, function (Faker\Generator $faker) {
         'zip' => '90210',
         'additional_information' => 'Some sample Additional information.',
 
+        'ticket_quantity' => 5,
     ];
 });
 
@@ -49,6 +53,15 @@ $factory->define(App\Ticket::class, function (Faker\Generator $faker) {
             return factory(App\Concert::class)->create()->id;
         },
         
+    ];
+});
+
+$factory->define(App\Order::class, function (Faker\Generator $faker) {
+    return [
+        'amount' => 5250,
+        'email' => 'somebody@example.com',
+        'confirmation_number' => 'ORDERCONFIRMATION1234',
+        'card_last_four' => '1234',
     ];
 });
 
