@@ -23,12 +23,22 @@ trait PaymentGatewayContractTests
         });
 
         $this->assertCount(1, $newCharges);
-        $this->assertEquals(2500,$newCharges->sum());
+        $this->assertEquals(2500,$newCharges->map->amount()->sum());
 
         //Verify that the charge was completed successfull
         //$this->assertCount(1, $this->newCharges($this->lastCharge));
         //$this->assertCount(1, $this->newCharges());
         //$this->assertEquals(2500,$this->lastCharge()->amount);
+    }
+
+    /** @test */
+    public function can_get_details_about_a_successful_charge()
+    {
+        $paymentGateway = $this->getPaymentGateway();
+        $charge = $paymentGateway->charge(2500,$paymentGateway->getValidTestToken($paymentGateway::TEST_CARD_NUMBER));
+
+        $this->assertEquals(substr($paymentGateway::TEST_CARD_NUMBER,-4), $charge->cardLastFour());
+        $this->assertEquals(2500, $charge->amount());
     }
 
     /** @test */
@@ -53,7 +63,7 @@ trait PaymentGatewayContractTests
     	
     }
 
-   
+    /** @test */
     public function can_fetch_charges_created_during_a_callback()
     {
         $paymentGateway = $this->getPaymentGateway();
@@ -64,9 +74,9 @@ trait PaymentGatewayContractTests
             $paymentGateway->charge(4000,$paymentGateway->getValidTestToken());
             $paymentGateway->charge(5000,$paymentGateway->getValidTestToken());
         });
-
+        //dd($newCharges);
         $this->assertCount(2, $newCharges);
-        $this->assertEquals([5000,4000],$newCharges->all());
+        $this->assertEquals([5000,4000],$newCharges->map->amount()->all());
     }
 
 

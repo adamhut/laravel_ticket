@@ -2,42 +2,49 @@
 namespace App\Billing;
 
 use Stripe\Token;
-use Stripe\Charge;
+
 use Stripe\Error\InvalidRequest;
 
 
 class StripePaymentGateway implements PaymentGateway
 {
+    const TEST_CARD_NUMBER= '4242424242424242';
 
     protected $charges;
     protected $apiKey;
+    protected $beforeFirstChargeCallback=null;
 
     public function __construct($apiKey)
     {
         $this->apiKey = $apiKey;
     }
-    protected $beforeFirstChargeCallback=null;
 
     public function charge($amount,$token)
     {
         try{
-            $result = Charge::create([
+            $stripeCharge = \Stripe\Charge::create([
                 "amount" => $amount,
                 "currency" => "usd",
                 "source" => $token, // obtained with Stripe.js
                 //"description" => "Charge for matthew.smith@example.com"
             ],$this->apiKey);
+
+            return new Charge([
+                'amount' => $stripeCharge['amount'],
+                'card_last_four' => $stripeCharge['source']['last4'],
+            ]);
+
         }catch(InvalidRequest $e)
         {
             throw new PaymentFailedException;
         }
     }
 
-    public function getValidTestToken()
+    public function getValidTestToken($cardNumber=self::TEST_CARD_NUMBER)
     {
         return Token::create([
             "card" => [
-                "number" => "4242424242424242",
+                "number" => $cardNumber,
                 "exp_month" => 1,
                 "exp_year" => date('Y')+1,
                 "cvc" => "123"
@@ -49,13 +56,18 @@ class StripePaymentGateway implements PaymentGateway
     {
         $lastestCharge = $this->lastCharge();
         $callback($this);
-        return $this->newChargesSince($lastestCharge)->pluck('amount');
+        return $this->newChargesSince($lastestCharge)->map(function($stripeCharge){
+            return new Charge([
+                'amount' => $stripeCharge['amount'],
+                'card_last_four' => $stripeCharge['source']['last4'],
+            ]);
+        });
         // /return $newCharge;
     }
 
     private function lastCharge()
     {
-        return Charge::all(
+        return \Stripe\Charge::all(
             ['limit'=>1],
             ['api_key'=>$this->apiKey]
         )['data'][0];
@@ -63,9 +75,9 @@ class StripePaymentGateway implements PaymentGateway
 
     private function newChargesSince($charge=null)
     {
-        $newCharges =Charge::all(
+        $newCharges =\Stripe\Charge::all(
             [
-                'limit'=>1,
+                //'limit'=>1,
                 'ending_before'=>$charge? $charge->id:null,
             ],
             ['api_key'=>$this->apiKey]

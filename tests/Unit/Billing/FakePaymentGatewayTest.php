@@ -17,10 +17,24 @@ class FakePaymentGatewayTest extends TestCase
         return new FakePaymentGateway;
     }
 
-
-
     /** @test */
     public function running_a_hook_before_the_first_charge()
+    {
+         $paymentGateway = new FakePaymentGateway;
+        $timesCallbackRan = 0;
+        $paymentGateway->beforeFirstCharge(function ($paymentGateway) use (&$timesCallbackRan) {
+            $timesCallbackRan++;
+            $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
+            $this->assertEquals(2500, $paymentGateway->totalCharges());
+        });
+        $paymentGateway->charge(2500, $paymentGateway->getValidTestToken());
+        $this->assertEquals(1, $timesCallbackRan);
+        $this->assertEquals(5000, $paymentGateway->totalCharges());
+      
+    }
+
+    
+    public function running_a_hook_only_once()
     {
         $paymentGateway = new FakePaymentGateway;
         $callbackRan = false;
@@ -34,23 +48,5 @@ class FakePaymentGatewayTest extends TestCase
         $this->assertTrue($callbackRan);
 
         $this->assertEquals(2500, $paymentGateway->totalCharges());
-    }
-
-    
-    public function running_a_hook_only_once()
-    {
-        $paymentGateway = new FakePaymentGateway;
-        $timesCallbackRan = 0;
-
-        $paymentGateway->beforeFirstCharge(function($paymentGateway) use(&$callbackRan){
-            $paymentGateway->charge(2500,$paymentGateway->getValidTestToken());
-            $callbackRan++;
-            $this->assertEquals(2500, $paymentGateway->totalCharges());
-        });
-
-        $paymentGateway->charge(2500,$paymentGateway->getValidTestToken());
-        $this->assertEquals(1,$timesCallbackRan);
-
-        $this->assertEquals(5000, $paymentGateway->totalCharges());
     }
 }
