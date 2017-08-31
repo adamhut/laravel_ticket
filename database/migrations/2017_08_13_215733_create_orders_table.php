@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             //$table->unsignedinteger('concert_id')->nullable();
             $table->unsignedInteger('amount');
             $table->string('email');
-            $table->string('card_last_four')->nullable();
+            $table->string('card_last_four');
             $table->timestamps();
         });
     }

@@ -19,23 +19,35 @@ class OrderTest extends TestCase
     /** @test */
     public function creating_an_order_from_tickets_email_and_charge()
     {
-
         //$concert = factory(Concert::class)->create()->addTickets(5);
         //$this->assertEquals(5,$concert->ticketsRemaining());
+        /*
+        
         $tickets = factory(Ticket::class,3)->create();
         $charge = new Charge([
             'amount'=>3600,
             'card_last_four' => '1234',
         ]);
+        */
+        $tickets = collect([
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class),
+            Mockery::spy(Ticket::class),
+        ]);
        
         $order = Order::forTickets($tickets,'jane@example.com',$charge);
 
         $this->assertEquals('jane@example.com',$order->email);
-        $this->assertEquals(3,$order->ticketQuantity());
+        //$this->assertEquals(3,$order->ticketQuantity());
         $this->assertEquals(3600, $order->amount);
         $this->assertEquals('1234', $order->card_last_four); 
-        //$this->assertEquals(2,$concert->ticketsRemaining());
+        //$this->assertEquals(2,$concert->ticketsRemaining());   
+        
+        $tickets->each->shuldHaveReceive('claimFor',[$order]);
+        
     }
+
+
 
     /** @test */
     public function retriving_an_order_by_confirmation_number()
@@ -72,15 +84,25 @@ class OrderTest extends TestCase
             'email'=>'jane@example.com',
             'amount' => 6000,
         ]);
-        $order->tickets()->saveMany(factory(Ticket::class,5)->create());
+
+        $order->tickets()->saveMany([
+            factory(Ticket::class)->create(['code'=>'ticketCode1']),
+            factory(Ticket::class)->create( ['code'=>'ticketCode2']),
+            factory(Ticket::class)->create(['code'=>'ticketCode3'])
+        ]);
 
         $result = $order->toArray();
 
         $this->assertEquals([
             'confirmation_number' => 'ORDERCONFIRMATION1234',
             'email'=>'jane@example.com',
-            'ticket_quantity'=> 5,
+            //'ticket_quantity'=> 3,
             'amount' => 6000,
+            'tickets' =>[
+                ['code'=>'ticketCode1'],
+                ['code'=>'ticketCode2'],
+                ['code'=>'ticketCode3'],
+            ],
         ], $result);
     }
 
