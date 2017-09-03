@@ -19,11 +19,11 @@ class TicketTest extends TestCase
     {
         $ticket = factory(Ticket::class)->create();   
 
-        $this->assertNull($ticket->reserve_at);
+        $this->assertNull($ticket->reserved_at);
 
         $ticket->reserve();
 
-        $this->assertNotNull($ticket->fresh()->reserve_at);
+        $this->assertNotNull($ticket->fresh()->reserved_at);
 
     }
 
@@ -33,13 +33,13 @@ class TicketTest extends TestCase
         //Arrange
         $ticket = factory(Ticket::class)->states('reserved')->create();
         
-        $this->assertNull($ticket->reserve_at);
+        $this->assertNotNull($ticket->reserved_at);
 
         //Act
         $ticket->release();
 
         //Assert
-        $this->assertNull($ticket->fresh()->reserve_at);
+        $this->assertNull($ticket->fresh()->reserved_at);
     }
 
     /** @test */
@@ -48,7 +48,7 @@ class TicketTest extends TestCase
         $order = factory(Order::class)->create();
         $ticket =factory(Ticket::class)->create(['code'=>null]);
 
-        TicketCode::shouldReceive('generate')->andReturn('TICKETCODE1');
+        TicketCode::shouldReceive('generateFor')->with($ticket)->andReturn('TICKETCODE1');
         
         $this->assertNull($ticket->fresh()->code);
         $ticket->claimFor($order);

@@ -26,7 +26,7 @@ class ViewConcertListingTest extends TestCase
             'venue_address' => '123 example Lane',
             'city' => 'Laraville',
             'state' => 'ON',
-            'zipcode' => '17916',
+            'zip' => '17916',
             'additional_information' => 'For tickets call (555) 555-5555',
         ]);
 

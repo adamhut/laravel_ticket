@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Mockery;
 use App\Concert;
 use Tests\TestCase;
+use App\Facades\TicketCode;
 use App\Billing\PaymentGateway;
 use App\Billing\FakePaymentGateway;
 use App\Facades\OrderConfirmationNumber;
@@ -58,13 +59,13 @@ class PurchaseTicketsTest extends TestCase
         $this->app->instance(OrderConfirmationNumberGenerator::class, $orderConfirmationGenerator);
         */
         OrderConfirmationNumber::shouldReceive('generate')->andReturn('ORDERCONFIRMATION1234');
+        TicketCode::shouldReceive('generateFor')->andReturn('ticketCode1','ticketCode2','ticketCode3');
+
 
         //create a concert
         $concert = factory(Concert::class)->states('published')->create([
             'ticket_price'=>3250,
         ])->addTickets(3);
-
-        
         
         //Act
         //Purchase concert ticekts
@@ -82,7 +83,7 @@ class PurchaseTicketsTest extends TestCase
                 'email' => 'john@example.com',
                 //'ticket_quantity' => 3,
                 'amount' => 9750,
-                'ticket' => [
+                'tickets' => [
                     ['code'=>'ticketCode1'],
                     ['code'=>'ticketCode2'],
                     ['code'=>'ticketCode3'],

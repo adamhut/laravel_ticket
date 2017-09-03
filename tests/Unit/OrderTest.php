@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Mockery;
 use App\Order;
 use App\Ticket;
 use App\Concert;
@@ -24,11 +25,12 @@ class OrderTest extends TestCase
         /*
         
         $tickets = factory(Ticket::class,3)->create();
+        */
         $charge = new Charge([
             'amount'=>3600,
             'card_last_four' => '1234',
         ]);
-        */
+        
         $tickets = collect([
             Mockery::spy(Ticket::class),
             Mockery::spy(Ticket::class),

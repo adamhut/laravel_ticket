@@ -42015,6 +42015,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.processing = true;
+            console.log(token);
             axios.post('/concerts/' + this.concertId + '/orders', {
                 email: token.email,
                 ticket_quantity: this.quantity,

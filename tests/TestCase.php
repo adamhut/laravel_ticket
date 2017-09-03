@@ -13,6 +13,8 @@ abstract class TestCase extends BaseTestCase
     protected function setUp()
     {
         parent::setUp();
+        //very use for 
+        //Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
         $this->disableExceptionHandling();
     }
 

@@ -87,6 +87,7 @@
             },
             purchaseTickets(token) {
                 this.processing = true
+                console.log(token);
                 axios.post(`/concerts/${this.concertId}/orders`, {
                     email: token.email,
                     ticket_quantity: this.quantity,
