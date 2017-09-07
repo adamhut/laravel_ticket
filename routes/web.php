@@ -25,10 +25,11 @@ Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login','Auth\LoginController@login')->name('auth.login');
 Route::post('/logout','Auth\LoginController@logout')->name('auth.logout');
 
-Route::group(['middleware'=>'auth'],function(){
-	Route::get('/backstage/concerts/new', 'Backstage\ConcertsController@create')->name('backstage.show');
+Route::group(['middleware'=>'auth','prefix'=>'backstage','namespace'=>'Backstage'],function(){
+	Route::get('/concerts/new', 'ConcertsController@create')->name('backstage.show');
+	Route::post('/concerts', 'ConcertsController@store')->name('backstage.store');
+	
 	Route::get('/concerts', 'ConcertsController@index')->name('backstage.concerts.index');
 
 });
-
 
