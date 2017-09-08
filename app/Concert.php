@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Ticket;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\NotEnoughTicketsException;
 
@@ -19,7 +20,18 @@ class Concert extends Model
         return $query->whereNotNull('published_at');
     }
 
+    public function isPublished()
+    {
+        return $this->published_at !==null;
+    }
 
+    public function publish()
+    {
+        $this->update(['published_at'=>Carbon::now()]);//
+        //or
+        //$this->update['published_at'=>$this->freshTimestamp()];//
+        
+    }
 
     public function getFormattedDateAttribute()
     {
@@ -55,6 +67,11 @@ class Concert extends Model
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     /*

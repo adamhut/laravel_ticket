@@ -6,6 +6,7 @@ use App\Concert;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ConcertsController extends Controller
 {
@@ -17,8 +18,24 @@ class ConcertsController extends Controller
 
     public function store()
     {
-    	$concert = Concert::create([
-    		'user_id' =>auth()->user()->id,
+    	
+    	$this->validate(request(), [
+            'title' => ['required'],
+            'date' => ['required', 'date'],
+            'time' => ['required', 'date_format:g:ia'],
+            'venue' => ['required'],
+            'venue_address' => ['required'],
+            'city' => ['required'],
+            'state' => ['required'],
+            'zip' => ['required'],
+            'ticket_price' => ['required', 'numeric', 'min:5'],
+            'ticket_quantity' => ['required', 'integer', 'min:1'],
+        ]);
+
+
+
+    	$concert = Auth::user()->concerts()->create([
+    		
     		'title' => request('title'),
     		'subtitle' => request('subtitle'),   		
             'additional_information' => request('additional_information'),
@@ -35,6 +52,8 @@ class ConcertsController extends Controller
             'ticket_price' => request('ticket_price') * 100,
             'ticket_quantity' => (int) request('ticket_quantity'),    		
     	])->addTickets( request('ticket_quantity'));
+
+    	$concert->publish();
     	return redirect()->route('concerts.show',$concert);
     }
 }
