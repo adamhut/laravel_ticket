@@ -5,6 +5,9 @@ namespace Tests\Feature\Backstage;
 use App\User;
 use App\Concert;
 use Tests\TestCase;
+use PHPUnit\Framework\Assert;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -12,6 +15,14 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class ViewConcertListTest extends TestCase
 {
 	use DatabaseMigrations;
+
+	protected function setUp()
+	{
+		parent::setUp();
+
+		
+		
+	}
     /** @test */
     public function guess_can_not_view_a_promoters_concert_list()
     {
@@ -37,14 +48,22 @@ class ViewConcertListTest extends TestCase
 
         //dd($concerts);
         $response = $this->actingAs($user)->get('/backstage/concerts');
-        
+        //dd($response->original);
         $response->assertStatus(200);
         //dd($response->original->getData());
-        $this->assertTrue($response->original->getData()['concerts']->contains($concertA));
-        $this->assertTrue($response->original->getData()['concerts']->contains($concertB));
-        $this->assertTrue($response->original->getData()['concerts']->contains($concertD));
+        
+        //$this->assertTrue($response->original->getData()['concerts']->contains($concertA));
+        //change the marco
+        $this->assertTrue($response->data('concerts')->contains($concertA));
+        //then chagee to collection macro
+        $response->data('concerts')->assertContains($concertA);
+        $response->data('concerts')->assertContains($concertB);
+        $response->data('concerts')->assertContains($concertD);
+        $response->data('concerts')->assertNotContains($concertC);
 
-        $this->assertFalse($response->original->getData()['concerts']->contains($concertC));
+        //$this->assertTrue($response->data('concerts')->contains($concertB));
+        //$this->assertTrue($response->data('concerts')->contains($concertD));
+        //$this->assertFalse($response->data('concerts')->contains($concertC));
     }
 
 
