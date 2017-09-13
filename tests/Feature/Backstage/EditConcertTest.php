@@ -574,9 +574,11 @@ class EditConcertTest extends TestCase
         ]);
         $this->assertFalse($concert->isPublished());
 
-        $response = $this->actingAs($user)->from("/backstage/concerts/{$concert->id}/edit")->patch("/backstage/concerts/{$concert->id}", $this->validParams([
-            'ticket_quantity' => '',
-        ]));
+        $response = $this->actingAs($user)
+        	->from("/backstage/concerts/{$concert->id}/edit")
+        	->patch("/backstage/concerts/{$concert->id}", $this->validParams([
+            	'ticket_quantity' => '',
+        	]));
 
         $response->assertRedirect("/backstage/concerts/{$concert->id}/edit");
         $response->assertSessionHasErrors('ticket_quantity');

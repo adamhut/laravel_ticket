@@ -66,10 +66,17 @@ class PurchaseTicketsTest extends TestCase
 
 
         //create a concert
+        /*
         $concert = factory(Concert::class)->states('published')->create([
             'ticket_price'=>3250,
-        ])->addTickets(3);
-
+            'ticket_quantity'=>3,
+        ]);
+        */
+        $concert = \ConcertFactory::createPublished([
+            'ticket_price'=>3250,
+            'ticket_quantity'=>3,
+        ]);
+        $concert->publish();
         //Act
         //Purchase concert ticekts
         $this->orderTickets($concert,[
