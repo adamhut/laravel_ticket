@@ -20,8 +20,13 @@ class ViewConcertListTest extends TestCase
 	{
 		parent::setUp();
 
-		
-		
+        Collection::macro('assertEquals', function($items){
+            Assert::assertEquals(count($this),count($items));
+            $this->zip($items)->each(function($pair){
+                list($a,$b) = $pair;
+                Assert::assertTrue($a->is($b));
+            });
+        });		
 	}
     /** @test */
     public function guess_can_not_view_a_promoters_concert_list()
@@ -41,12 +46,15 @@ class ViewConcertListTest extends TestCase
 
         $otherUser = factory(User::class)->create();
 
-        $concertA = factory(Concert::class)->create(['user_id' => $user->id]);
-        $concertB = factory(Concert::class)->create(['user_id' => $user->id]);
-        $concertC = factory(Concert::class)->create(['user_id' => $otherUser->id]);
-        $concertD = factory(Concert::class)->create(['user_id' => $user->id]);
-
-        //dd($concerts);
+        $publishedConcertA = \ConcertFactory::createPublished(['user_id' => $user->id]);
+        $publishedConcertB = \ConcertFactory::createPublished(['user_id' => $otherUser->id]);
+        $publishedConcertC = \ConcertFactory::createPublished(['user_id' => $user->id]);
+        //createUnpublished
+        $unpublishedConcertA = \ConcertFactory::createUnpublished(['user_id' => $user->id]);
+        $unpublishedConcertB = \ConcertFactory::createUnpublished(['user_id' => $otherUser->id]);
+        $unpublishedConcertC = \ConcertFactory::createUnpublished(['user_id' => $user->id]);
+        // /dd($unpublishedConcertA);
+       
         $response = $this->actingAs($user)->get('/backstage/concerts');
         //dd($response->original);
         $response->assertStatus(200);
@@ -54,13 +62,32 @@ class ViewConcertListTest extends TestCase
         
         //$this->assertTrue($response->original->getData()['concerts']->contains($concertA));
         //change the marco
-        $this->assertTrue($response->data('concerts')->contains($concertA));
+        //$this->assertTrue($response->data('concerts')->contains($concertA));
         //then chagee to collection macro
-        $response->data('concerts')->assertContains($concertA);
-        $response->data('concerts')->assertContains($concertB);
-        $response->data('concerts')->assertContains($concertD);
-        $response->data('concerts')->assertNotContains($concertC);
+        //dd($response->data('publishedConcerts'));
+        $response->data('publishedConcerts')->assertEquals([
+            $publishedConcertA,
+            $publishedConcertC,
+        ]);
 
+        $response->data('unpublishedConcerts')->assertEquals([
+            $unpublishedConcertA,
+            $unpublishedConcertC,
+        ]);
+        
+        //$response->data('publishedConcerts')->assertContains($publishedConcertA);
+        //$response->data('publishedConcerts')->assertNotContains($publishedConcertB);
+        //$response->data('publishedConcerts')->assertContains($publishedConcertC);
+        //$response->data('publishedConcerts')->assertNotContains($unpublishedConcertA);
+        //$response->data('publishedConcerts')->assertNotContains($unpublishedConcertB);
+        //$response->data('publishedConcerts')->assertNotContains($unpublishedConcertC);
+        //$response->data('unpublishedConcerts')->assertContains($unpublishedConcertA);
+        //$response->data('unpublishedConcerts')->assertNotContains($unpublishedConcertB);
+        //$response->data('unpublishedConcerts')->assertContains($unpublishedConcertC);
+        //$response->data('unpublishedConcerts')->assertNotContains($publishedConcertA);
+        //$response->data('unpublishedConcerts')->assertNotContains($publishedConcertB);
+        //$response->data('unpublishedConcerts')->assertNotContains($publishedConcertC);
+      
         //$this->assertTrue($response->data('concerts')->contains($concertB));
         //$this->assertTrue($response->data('concerts')->contains($concertD));
         //$this->assertFalse($response->data('concerts')->contains($concertC));

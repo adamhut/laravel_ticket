@@ -76,12 +76,11 @@ class AddConcertTest extends TestCase
 
 
         tap(Concert::first(), function ($concert) use ($response, $user) {
-        	$response->assertStatus(302)->assertRedirect("/concerts/{$concert->id}");
-
-            //$response->assertStatus()->assertRedirect('/backstage/concerts');
+        	//$response->assertStatus(302)->assertRedirect("/concerts/{$concert->id}");
+            $response->assertRedirect('/backstage/concerts');
             $this->assertTrue($concert->user->is($user));
 
-            $this->assertTrue($concert->isPublished());
+            $this->assertFalse($concert->isPublished());
             
             $this->assertEquals('No Warning', $concert->title);
             $this->assertEquals('with Cruel Hand and Backtrack', $concert->subtitle);
@@ -94,7 +93,7 @@ class AddConcertTest extends TestCase
             $this->assertEquals('12345', $concert->zip);
             $this->assertEquals(3250, $concert->ticket_price);
             $this->assertEquals(75, $concert->ticket_quantity);
-            $this->assertEquals(75, $concert->ticketsRemaining());
+            $this->assertEquals(0, $concert->ticketsRemaining());
         });
     }
 
@@ -136,7 +135,9 @@ class AddConcertTest extends TestCase
         ]));
 
         tap(Concert::first(), function ($concert) use ($response, $user) {
-        	$response->assertStatus(302)->assertRedirect("/concerts/{$concert->id}"); 
+        	//$response->assertStatus(302)->assertRedirect("/concerts/{$concert->id}"); 
+            $response->assertRedirect("backstage/concerts"); 
+            
             $this->assertNull( $concert->subtitle);
             $this->assertTrue($concert->user->is($user));
         });
@@ -145,6 +146,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function additional_information_is_optional()
     {
+
         $this->disableExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->post('/backstage/concerts', $this->validParams([
@@ -160,6 +162,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function date_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'date' => '',
@@ -172,6 +175,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function date_must_be_a_valid_date()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'date' => 'not a date',
@@ -183,6 +187,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function time_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'time' => '',
@@ -194,6 +199,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function time_must_be_a_valid_time()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'time' => 'not-a-time',
@@ -205,6 +211,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function venue_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'venue' => '',
@@ -216,6 +223,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function venue_address_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'venue_address' => '',
@@ -227,6 +235,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function city_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'city' => '',
@@ -238,6 +247,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function state_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'state' => '',
@@ -249,6 +259,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function zip_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'zip' => '',
@@ -260,6 +271,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function ticket_price_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'ticket_price' => '',
@@ -271,6 +283,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function ticket_price_must_be_numeric()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'ticket_price' => 'not a price',
@@ -282,6 +295,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function ticket_price_must_be_at_least_5()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'ticket_price' => '4.99',
@@ -293,6 +307,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function ticket_quantity_is_required()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'ticket_quantity' => '',
@@ -304,6 +319,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function ticket_quantity_must_be_numeric()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'ticket_quantity' => 'not a number',
@@ -315,6 +331,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function ticket_quantity_must_be_at_least_1()
     {
+        $this->withExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->from('/backstage/concerts/new')->post('/backstage/concerts', $this->validParams([
             'ticket_quantity' => '0',
