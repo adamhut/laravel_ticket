@@ -21,6 +21,10 @@ abstract class TestCase extends BaseTestCase
         //Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
         $this->disableExceptionHandling();
 
+        TestResponse::macro('assertViewIs', function ($name) {
+            Assert::assertEquals($name, $this->original->name());
+        });
+
         TestResponse::macro('data',function($key){
             return $this->original->getData()[$key];
         });
