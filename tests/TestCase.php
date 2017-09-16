@@ -17,7 +17,7 @@ abstract class TestCase extends BaseTestCase
     protected function setUp()
     {
         parent::setUp();
-        //very use for 
+        //very use for
         //Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
         $this->disableExceptionHandling();
 
@@ -37,11 +37,19 @@ abstract class TestCase extends BaseTestCase
             Assert::assertFalse($this->contains($value), "Failed asserting that the collection does not contain the specified value.");
         });
 
+        EloquentCollection::macro('assertEquals', function($items){
+            Assert::assertEquals(count($this),count($items));
+            $this->zip($items)->each(function($pair){
+                list($a,$b) = $pair;
+                Assert::assertTrue($a->is($b));
+            });
+        });
+
     }
 
     protected function from($url)
     {
-        session()->setPreviousUrl(url($url));       
+        session()->setPreviousUrl(url($url));
         return $this;
     }
 

@@ -19,14 +19,21 @@ class ViewPublishedConcertOrdersTest extends TestCase
     function a_promoter_can_view_the_orders_of_their_own_published_concert()
     {
         $this->disableExceptionHandling();
+        //$this->withExceptionHandling();
+
         $user = factory(User::class)->create();
         $concert = ConcertFactory::createPublished(['user_id' => $user->id]);
 
+        //dd($order->load('tickets'));
         $response = $this->actingAs($user)->get("/backstage/published-concerts/{$concert->id}/orders");
 
+
         $response->assertStatus(200);
+
         $response->assertViewIs('backstage.published-concert-orders.index');
+
         $this->assertTrue($response->data('concert')->is($concert));
+
     }
 
     /** @test */

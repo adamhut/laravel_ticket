@@ -4,9 +4,9 @@ use App\Concert;
 
 
 /**
-* 
+*
 */
-class ConcertFactory 
+class ConcertFactory
 {
 	public static function createPublished($overrides=[])
 	{
@@ -23,4 +23,6 @@ class ConcertFactory
 
 		return $concert;
 	}
+
+
 }

@@ -20,13 +20,7 @@ class ViewConcertListTest extends TestCase
 	{
 		parent::setUp();
 
-        Collection::macro('assertEquals', function($items){
-            Assert::assertEquals(count($this),count($items));
-            $this->zip($items)->each(function($pair){
-                list($a,$b) = $pair;
-                Assert::assertTrue($a->is($b));
-            });
-        });		
+
 	}
     /** @test */
     public function guess_can_not_view_a_promoters_concert_list()
@@ -54,12 +48,12 @@ class ViewConcertListTest extends TestCase
         $unpublishedConcertB = \ConcertFactory::createUnpublished(['user_id' => $otherUser->id]);
         $unpublishedConcertC = \ConcertFactory::createUnpublished(['user_id' => $user->id]);
         // /dd($unpublishedConcertA);
-       
+
         $response = $this->actingAs($user)->get('/backstage/concerts');
         //dd($response->original);
         $response->assertStatus(200);
         //dd($response->original->getData());
-        
+
         //$this->assertTrue($response->original->getData()['concerts']->contains($concertA));
         //change the marco
         //$this->assertTrue($response->data('concerts')->contains($concertA));
@@ -74,7 +68,7 @@ class ViewConcertListTest extends TestCase
             $unpublishedConcertA,
             $unpublishedConcertC,
         ]);
-        
+
         //$response->data('publishedConcerts')->assertContains($publishedConcertA);
         //$response->data('publishedConcerts')->assertNotContains($publishedConcertB);
         //$response->data('publishedConcerts')->assertContains($publishedConcertC);
@@ -87,7 +81,7 @@ class ViewConcertListTest extends TestCase
         //$response->data('unpublishedConcerts')->assertNotContains($publishedConcertA);
         //$response->data('unpublishedConcerts')->assertNotContains($publishedConcertB);
         //$response->data('unpublishedConcerts')->assertNotContains($publishedConcertC);
-      
+
         //$this->assertTrue($response->data('concerts')->contains($concertB));
         //$this->assertTrue($response->data('concerts')->contains($concertD));
         //$this->assertFalse($response->data('concerts')->contains($concertC));
