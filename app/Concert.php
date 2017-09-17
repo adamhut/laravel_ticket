@@ -4,6 +4,7 @@ namespace App;
 
 use App\Ticket;
 use Carbon\Carbon;
+use App\AttendeeMessage;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\NotEnoughTicketsException;
 
@@ -32,7 +33,7 @@ class Concert extends Model
         $this->update(['published_at'=>Carbon::now()]);//
         //or
         //$this->update['published_at'=>$this->freshTimestamp()];//
-        
+
     }
 
     public function getFormattedDateAttribute()
@@ -78,13 +79,18 @@ class Concert extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function attendeeMessages()
+    {
+        return $this->hasMany(AttendeeMessage::class);
+    }
+
     /*
     public function orderTickets($email,$ticketQuantity)
     {
         $tickets = $this->findTickets($ticketQuantity);
 
         return $this->createOrder($email,$tickets);
-      
+
     }
     */
 
@@ -101,16 +107,16 @@ class Concert extends Model
     {
         //Find the tickets
         $tickets = $this->tickets()->available()->take($quantity)->get();
-       
+
         if($tickets->count() < $quantity )
         {
             throw new NotEnoughTicketsException;
-        } 
+        }
 
-        return $tickets; 
+        return $tickets;
     }
 
-    
+
     /*
     public function createOrder($email ,$tickets)
     {
@@ -125,7 +131,7 @@ class Concert extends Model
             $order->tickets()->save($ticket);
         }
 
-        return $order;   
+        return $order;
     }
     */
 
