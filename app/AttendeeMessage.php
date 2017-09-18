@@ -20,4 +20,17 @@ class AttendeeMessage extends Model
     {
         return $this->belongsTo(Concert::class);
     }
+
+    public function orders()
+    {
+        return $this->concert->orders();
+    }
+
+    public function withChunkedRecipients($chunkSize=20,$callback)
+    {
+        $this->orders()->chunk($chunkSize,function($orders) use ($callback){
+            //dd($recipient);
+            $callback($order->pluck(20));
+        });
+    }
 }
