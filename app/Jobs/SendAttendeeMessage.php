@@ -50,6 +50,5 @@ class SendAttendeeMessage implements ShouldQueue
                 Mail::to($recipient)->queue(new AttendeeMessageEmail($this->attendeeMessage));
             });
         });
-
     }
 }

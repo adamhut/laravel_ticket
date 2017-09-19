@@ -30,7 +30,7 @@ class AttendeeMessage extends Model
     {
         $this->orders()->chunk($chunkSize,function($orders) use ($callback){
             //dd($recipient);
-            $callback($order->pluck(20));
+            $callback($orders->pluck('email'));
         });
     }
 }

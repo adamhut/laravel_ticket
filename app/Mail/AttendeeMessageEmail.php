@@ -32,6 +32,9 @@ class AttendeeMessageEmail extends Mailable
     public function build()
     {
 
-        return $this->view('emails.attendee-message-email');
+        return $this->from('info@bacera.com.au')
+                    ->subject($this->attendeeMessage->subject)
+                    ->text('email.attendee-message-email');
+                    //->view('email.attendee-message-email');
     }
 }
