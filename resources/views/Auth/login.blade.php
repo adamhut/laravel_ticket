@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('body')
-{{ svg_spritesheet() }}
+
 <div class="container-fluid bg-soft">
     <div class="full-height flex-center">
         <div class="constrain constrain-sm flex-fit">
@@ -36,4 +36,10 @@
         </div>
     </div>
 </div>
+<<<<<<< .mine
 @endsection
+
+=======
+{{ svg_spritesheet() }}
+@endsection
+>>>>>>> .theirs

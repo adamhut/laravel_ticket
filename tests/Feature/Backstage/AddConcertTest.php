@@ -6,6 +6,8 @@ use App\User;
 use App\Concert;
 use Carbon\Carbon;
 use Tests\TestCase;
+use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -339,5 +341,30 @@ class AddConcertTest extends TestCase
         $response->assertRedirect('/backstage/concerts/new');
         $response->assertSessionHasErrors('ticket_quantity');
         $this->assertEquals(0, Concert::count());
+    }
+
+    /** @test */
+    public function poster_image_is_uploaded_if_included()
+    {
+        Storage::fake('s3');
+        //create a user
+        $this->withExceptionHandling();
+        $user = factory(User::class)->create();
+        //submit the form, including a poster image
+        $response = $this->actingAs($user)
+            ->from('/backstage/concerts/new')
+            ->post('/backstage/concerts', $this->validParams([
+                'poster_image' => File::image('concert-poster.png'),
+        ]));
+        
+        //verify that the poster image was saved correctlly
+        Storage::disk('s3')->put('');
+
+        $this->assertNotNull(Concert::first()->poster_image_path);
+        Storage::disk('s3')->assertExists(Concert::first()->poster_image_path);
+        //make sure the concert has the poster path save to it 
+        
+        //file that we uploaded
+        
     }
 }

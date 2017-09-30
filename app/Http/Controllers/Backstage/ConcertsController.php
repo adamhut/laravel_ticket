@@ -73,7 +73,7 @@ class ConcertsController extends Controller
     {
         $concert = Auth::user()->concerts()->findOrFail($id);
         //dd($concert->isPublished());
-        abort_if($cocnert->isPublished(), 403);
+        abort_if($concert->isPublished(), 403);
 
         return view('backstage.concerts.edit',[
             'concert' => $concert,
