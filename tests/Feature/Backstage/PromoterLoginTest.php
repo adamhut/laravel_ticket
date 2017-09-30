@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class PromoterLoginTest extends TestCase
 {
 	use DatabaseMigrations;
-    
+
 
     /** @test */
      public function logging_in_successfully()
@@ -21,7 +21,7 @@ class PromoterLoginTest extends TestCase
              'email' => 'jane@example.com',
              'password' => bcrypt('super-secret-password'),
          ]);
- 
+
          $this->browse(function (Browser $browser) {
              $browser->visit('/login')
                     ->type('email', 'jane@example.com')
@@ -50,7 +50,7 @@ class PromoterLoginTest extends TestCase
 
         $this->assertTrue(Auth::check());
 
-        $this->assertTrue(Auth::user()->is($user)); 
+        $this->assertTrue(Auth::user()->is($user));
 
     }
 
