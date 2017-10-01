@@ -11,7 +11,7 @@
 |
 */
 
-auth()->loginUsingId(1);
+//auth()->loginUsingId(1);
 Route::get('/mockups/order',function(){
 	return view('orders.show');
 });
