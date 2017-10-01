@@ -27,17 +27,27 @@ Route::post('/login','Auth\LoginController@login')->name('auth.login');
 Route::post('/logout','Auth\LoginController@logout')->name('auth.logout');
 
 Route::group(['middleware'=>'auth','prefix'=>'backstage','namespace'=>'Backstage'],function(){
-	Route::get('/concerts', 'ConcertsController@index')->name('backstage.concerts.index');
-	Route::get('/concerts/new', 'ConcertsController@create')->name('backstage.concerts.new');
-	Route::post('/concerts', 'ConcertsController@store')->name('backstage.concerts.store');
-	Route::get('/concerts/{id}/edit', 'ConcertsController@edit')->name('backstage.concerts.edit');
-	Route::patch('/concerts/{id}', 'ConcertsController@update')->name('backstage.concerts.update');
+ 		Route::group(['middleware'=>'password_expried'],function(){
+		Route::get('/concerts', 'ConcertsController@index')->name('backstage.concerts.index');
+		Route::get('/concerts/new', 'ConcertsController@create')->name('backstage.concerts.new');
+		Route::post('/concerts', 'ConcertsController@store')->name('backstage.concerts.store');
+		Route::get('/concerts/{id}/edit', 'ConcertsController@edit')->name('backstage.concerts.edit');
+		Route::patch('/concerts/{id}', 'ConcertsController@update')->name('backstage.concerts.update');
 
-	Route::post('published-concerts','PublishedConcertsController@store')->name('backstage.published-concerts.store');
-	Route::get('/published-concerts/{id}/orders', 'PublishedConcertOrdersController@index')->name('backstage.published-concert-orders.index');
+		Route::post('published-concerts','PublishedConcertsController@store')->name('backstage.published-concerts.store');
+		Route::get('/published-concerts/{id}/orders', 'PublishedConcertOrdersController@index')->name('backstage.published-concert-orders.index');
 
-    Route::get('/concerts/{id}/messages/new', 'ConcertMessagesController@create')->name('backstage.concert-messages.new');
-    Route::post('/concerts/{id}/messages', 'ConcertMessagesController@store')->name('backstage.concert-messages.store');
+    	Route::get('/concerts/{id}/messages/new', 'ConcertMessagesController@create')->name('backstage.concert-messages.new');
+    	Route::post('/concerts/{id}/messages', 'ConcertMessagesController@store')->name('backstage.concert-messages.store');
+	});
+
+ 	//Route::get('password/expired', 'Auth\ExpiredPasswordController@index')->name('password.expired');
+	Route::get('password/expired', 'ExpiredPasswordController@index')->name('password.expired');
+
+    Route::post('password/expired', 'ExpiredPasswordController@store')
+        ->name('password.expired.post');
 });
+
+
 
 
