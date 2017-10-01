@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Concert;
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -32,5 +33,13 @@ class User extends Authenticatable
     public function concerts()
     {
         return $this->hasMany(Concert::class);
+    }
+
+    public function isPasswordExpired()
+    {
+        $passwordChangeAt = new Carbon(($this->password_changed_at) ?  $this->password_changed_at : $this->created_at);
+
+        return !! (Carbon::now()->diffInDays($passwordChangeAt) > config('auth.password_expires_days'));
+
     }
 }

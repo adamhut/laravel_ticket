@@ -17,10 +17,8 @@ class PasswordExpired
     public function handle($request, Closure $next)
     {
         $user = $request->user();
-
-        $passwordChangeAt = new Carbon(($user->password_changed_at) ?  $user->password_changed_at : $user->created_at);
-
-        if(Carbon::now()->diffInDays($passwordChangeAt) > config('auth.password_expires_days'))
+        //return $next($request);
+        if($user->isPasswordExpired())
         {
             return redirect()->route('password.expired');
         }

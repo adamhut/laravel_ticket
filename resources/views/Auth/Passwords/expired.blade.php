@@ -42,7 +42,7 @@
                 </div>
                 <button type="submit" class="btn btn-block btn-primary">Reset Password</button>
                 @if($errors->any())
-                     @foreach ($errors->all() as $error)
+                     @foreach ($errors->all() as  $error)
                         <p class="text-center text-danger m-xs-t-2">
                             These credentials or the password does not matched
                             <li>{{$error}}</li>

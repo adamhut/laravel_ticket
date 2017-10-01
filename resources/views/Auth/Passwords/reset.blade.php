@@ -9,12 +9,12 @@
                 {{ csrf_field() }}
                 <h1 class="text-xl wt-light text-center m-xs-b-6">Reset Your Password</h1>
                 <div class="form-group">
-                    <label class="form-label pseudo-hidden">Email address</label>
+                    <label class="form-label pseudo-hidden">Current Password</label>
                     <div class="input-group">
                         <span class="input-group-addon">
                             @icon('user', 'text-dark-muted text-xs')
                         </span>
-                        <input type="email" name="email" class="form-control" placeholder="Email address" value="{{ old('email') }}">
+                        <input type="password" name="current_password" class="form-control" placeholder="Email address" value="{{ old('current_password') }}">
                     </div>
                 </div>
                 <div class="form-group">
@@ -41,6 +41,7 @@
                         These credentials or the password does not matched
                     </p>
                 @endif
+
             </form>
         </div>
     </div>
