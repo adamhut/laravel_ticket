@@ -59,6 +59,7 @@ class PromoterLoginTest extends TestCase
     public function loggin_in_with_invalid_credentals()
     {
     	//$this->disable
+        $this->withExceptionHandling();
         $user = factory(User::class)->create([
         	'email' => 'jane@example.com',
         	'password' => bcrypt('super-secret-password'),
