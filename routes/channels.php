@@ -14,3 +14,8 @@
 Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+Broadcast::channel('channel.1', function ($user) {
+    return true;
+    //return $user->id === Order::findOrNew($orderId)->user_id;
+});
