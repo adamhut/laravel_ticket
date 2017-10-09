@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\TestMessage;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +13,9 @@
 |
 */
 
+Route::get('pusher',function(){
+    event(new TestMessage('hello'));
+});
 //auth()->loginUsingId(1);
 Route::get('/mockups/order',function(){
 	return view('orders.show');
