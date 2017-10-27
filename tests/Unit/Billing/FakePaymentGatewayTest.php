@@ -20,7 +20,7 @@ class FakePaymentGatewayTest extends TestCase
     /** @test */
     public function running_a_hook_before_the_first_charge()
     {
-         $paymentGateway = new FakePaymentGateway;
+        $paymentGateway = new FakePaymentGateway;
         $timesCallbackRan = 0;
         $paymentGateway->beforeFirstCharge(function ($paymentGateway) use (&$timesCallbackRan) {
             $timesCallbackRan++;

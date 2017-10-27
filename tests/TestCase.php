@@ -53,7 +53,7 @@ abstract class TestCase extends BaseTestCase
         return $this;
     }
 
-     // Hat tip, @adamwathan.
+    // Hat tip, @adamwathan.
     protected function disableExceptionHandling()
     {
         $this->oldExceptionHandler = $this->app->make(ExceptionHandler::class);

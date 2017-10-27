@@ -14,7 +14,7 @@ use App\Events\TestMessage;
 */
 
 Route::get('pusher',function(){
-    event(new TestMessage('hello'));
+    event(new TestMessage('hello test again'));
 });
 //auth()->loginUsingId(1);
 Route::get('/mockups/order',function(){
