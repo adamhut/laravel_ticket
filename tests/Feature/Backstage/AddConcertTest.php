@@ -7,6 +7,7 @@ use App\Concert;
 use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Http\Testing\File;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -346,9 +347,10 @@ class AddConcertTest extends TestCase
     /** @test */
     public function poster_image_is_uploaded_if_included()
     {
-        Storage::fake('s3');
-        //create a user
         $this->withExceptionHandling();
+
+        Storage::fake('pubic');
+        //create a user
         $user = factory(User::class)->create();
         //submit the form, including a poster image
         $file = File::image('concert-poster.png',850,1100);
@@ -365,12 +367,12 @@ class AddConcertTest extends TestCase
         tap(Concert::first(),function($concert) use($file){
               $this->assertNotNull($concert->poster_image_path);
             //dd(Concert::first()->poster_image_path);
-            Storage::disk('s3')->assertExists($concert->poster_image_path);
+            Storage::disk('public')->assertExists($concert->poster_image_path);
             //make sure the concert has the poster path save to it
 
             $this->assertFileEquals(
                 $file->getPathname(),
-                Storage::disk('s3')->path($concert->poster_image_path)
+                Storage::disk('public')->path($concert->poster_image_path)
             );
             //file that we uploaded
         });
@@ -379,7 +381,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function poster_image_must_be_an_image()
     {
-        Storage::fake('s3');
+        Storage::fake('public');
         //create a user
         $this->withExceptionHandling();
         $user = factory(User::class)->create();
@@ -400,7 +402,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function poster_image_must_be_at_least_400px_wide()
     {
-        Storage::fake('s3');
+        Storage::fake('public');
         //create a user
         $this->withExceptionHandling();
         $user = factory(User::class)->create();
@@ -421,7 +423,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function poster_image_must_have_letter_aspect_ratio()
     {
-        Storage::fake('s3');
+        Storage::fake('public');
         //create a user
         $this->withExceptionHandling();
         $user = factory(User::class)->create();
@@ -442,7 +444,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function poster_image_is_optional()
     {
-        Storage::fake('s3');
+        Storage::fake('public');
         //create a user
         //$this->withExceptionHandling();
         $user = factory(User::class)->create();
@@ -462,5 +464,24 @@ class AddConcertTest extends TestCase
         });
     }
 
+    /** @test */
+    public function an_event_is_fired_when_concert_is_added()
+    {
+        Event::fake([ConcertAdded::class]);
+        //create a user
+        $this->withExceptionHandling();
+        $user = factory(User::class)->create();
+        //submit the form, including a poster image
+
+        $response = $this->actingAs($user)->post('/backstage/concerts', $this->validParams());
+
+        //Assert taht a conccert Added event was dispatched
+        Event::assertDispatch(ConcertAdded::class,function($event) {
+            $concert = Concert::firstOrFail();
+            return $event->concert->is($concert);
+        });
+
+        
+    }
 
 }
