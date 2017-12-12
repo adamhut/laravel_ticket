@@ -19,11 +19,13 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         //very use for
         //Mockery::getConfiguration()->allowMockingNonExistentMethods(false);
-        $this->disableExceptionHandling();
+        //$this->withoutExceptionHandling();
 
+        /*
         TestResponse::macro('assertViewIs', function ($name) {
             Assert::assertEquals($name, $this->original->name());
         });
+        */
 
         TestResponse::macro('data',function($key){
             return $this->original->getData()[$key];
@@ -46,16 +48,20 @@ abstract class TestCase extends BaseTestCase
         });
 
     }
-
+    /*
     protected function from($url)
     {
         session()->setPreviousUrl(url($url));
         return $this;
     }
+    */
 
-     // Hat tip, @adamwathan.
+    // Hat tip, @adamwathan.
+    
     protected function disableExceptionHandling()
     {
+        //$this->withoutExceptionHandling();
+        /*
         $this->oldExceptionHandler = $this->app->make(ExceptionHandler::class);
         $this->app->instance(ExceptionHandler::class, new class extends Handler {
             public function __construct() {}
@@ -64,6 +70,7 @@ abstract class TestCase extends BaseTestCase
                 throw $e;
             }
         });
+        */
     }
     protected function withExceptionHandling()
     {

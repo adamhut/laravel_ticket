@@ -18,7 +18,7 @@ class MessageAttendeesTest extends TestCase
     /** @test */
     function a_promoter_can_view_the_message_form_for_their_own_concert()
     {
-        $this->disableExceptionHandling();
+        $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
         $concert = ConcertFactory::createPublished([
             'user_id' => $user->id,

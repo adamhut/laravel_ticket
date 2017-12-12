@@ -55,6 +55,13 @@ $factory->define(App\Ticket::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Invitation::class, function (Faker\Generator $faker) {
+
+    return [
+        
+    ];
+});
+
 $factory->define(App\Order::class, function (Faker\Generator $faker) {
     return [
         'amount' => 5250,
