@@ -60,7 +60,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function adding_a_valid_concert()
     {
-        $this->disableExceptionHandling();
+        $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->post('/backstage/concerts',[
             'title' => 'No Warning',
@@ -131,7 +131,7 @@ class AddConcertTest extends TestCase
     /** @test */
     function subtitle_is_optional()
     {
-        $this->disableExceptionHandling();
+        $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->post('/backstage/concerts', $this->validParams([
         	'subtitle'=>''
@@ -150,7 +150,7 @@ class AddConcertTest extends TestCase
     function additional_information_is_optional()
     {
 
-        $this->disableExceptionHandling();
+        $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
         $response = $this->actingAs($user)->post('/backstage/concerts', $this->validParams([
             'additional_information' => "",

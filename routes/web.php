@@ -31,6 +31,10 @@ Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login','Auth\LoginController@login')->name('auth.login');
 Route::post('/logout','Auth\LoginController@logout')->name('auth.logout');
 
+Route::post('/register', 'Auth\RegisterController@register')->name('auth.register');
+
+Route::get('/invitations/{code}','InvitationController@show')->name('invitations.show');
+
 Route::group(['middleware'=>['password_expried','auth'],'prefix'=>'backstage','namespace'=>'Backstage'],function(){
 
 	Route::get('/concerts', 'ConcertsController@index')->name('backstage.concerts.index');
