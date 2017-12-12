@@ -57,7 +57,6 @@ abstract class TestCase extends BaseTestCase
     */
 
     // Hat tip, @adamwathan.
-    
     protected function disableExceptionHandling()
     {
         //$this->withoutExceptionHandling();
