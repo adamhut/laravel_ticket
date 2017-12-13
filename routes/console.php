@@ -1,5 +1,8 @@
 <?php
 
+use App\Invitation;
+use App\Mail\InvitationEmail;
+use App\Facades\InvitationCode;
 use Illuminate\Foundation\Inspiring;
 
 /*
@@ -13,6 +16,14 @@ use Illuminate\Foundation\Inspiring;
 |
 */
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->describe('Display an inspiring quote');
+Artisan::command('invite-promoter {email}', function ($email) {
+
+    $invitation = Invitation::create([
+        'email' => $email,
+        'code'=> InvitationCode::generate(),
+    ]);
+
+    $invitation->send();
+   
+
+})->describe('Invite a promoter to create a account');
