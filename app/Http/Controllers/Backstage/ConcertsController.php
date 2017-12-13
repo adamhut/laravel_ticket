@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backstage;
 use App\Concert;
 use App\NullFile;
 use Carbon\Carbon;
+use App\Events\ConcertAdded;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
@@ -67,6 +68,8 @@ class ConcertsController extends Controller
             'poster_image_path' =>  request('poster_image',new NullFile)->store('posters','s3'),
     	]);
 
+        //Queue a job to process the poster image.
+        ConcertAdded::dispatch($concert);
         //$concert->publish();
 
     	//return redirect()->route('concerts.show',$concert);

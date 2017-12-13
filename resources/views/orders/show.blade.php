@@ -84,4 +84,5 @@
         </div>
     </div>
 </div>
+{{ svg_spritesheet() }}
 @endsection
