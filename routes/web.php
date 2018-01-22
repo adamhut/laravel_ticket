@@ -12,6 +12,9 @@ use App\Events\TestMessage;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/',function(){
+	return view('welcome');
+});
 
 Route::get('pusher',function(){
     event(new TestMessage('hello test again'));
@@ -49,6 +52,9 @@ Route::group(['middleware'=>['password_expried','auth'],'prefix'=>'backstage','n
     Route::get('/concerts/{id}/messages/new', 'ConcertMessagesController@create')->name('backstage.concert-messages.new');
     Route::post('/concerts/{id}/messages', 'ConcertMessagesController@store')->name('backstage.concert-messages.store');
 
+	Route::get('/stripe-connect/authorize','StripeConnectController@authorizeRedirect');
+	Route::get('/stripe-connect/redirect', 'StripeConnectController@redirect');
+
 });
 
 Route::group(['middleware'=>'auth','prefix'=>'backstage','namespace'=>'Backstage'],function(){
@@ -60,4 +66,5 @@ Route::group(['middleware'=>'auth','prefix'=>'backstage','namespace'=>'Backstage
         ->name('password.expired.post');
 
 });
+
 

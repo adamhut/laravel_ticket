@@ -1,0 +1,14 @@
+[
+    {
+        "level": "WARNING",
+        "message": "https:\/\/connect.stripe.com\/oauth\/authorize?response_type=code&scope=read_write&client_id=ca_CAhWMtLosUFNLodikPBDsOyL6YVVxZaH - The SSL certificate used to load resources from https:\/\/cdn.mxpnl.com will be distrusted in the future. Once distrusted, users will be prevented from loading these resources. See https:\/\/g.co\/chrome\/symantecpkicerts for more information.",
+        "source": "security",
+        "timestamp": 1516459204904
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/laraticket.test\/js\/app.js 846:10 \"CSRF token not found: https:\/\/laravel.com\/docs\/csrf#csrf-x-csrf-token\"",
+        "source": "console-api",
+        "timestamp": 1516459210036
+    }
+]
