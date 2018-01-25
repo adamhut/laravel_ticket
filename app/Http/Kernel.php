@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use App\Http\Middleware\ForceStripeAccount;
 
 class Kernel extends HttpKernel
 {
@@ -57,5 +58,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'password_expried' => \App\Http\Middleware\PasswordExpired::class,
+        'forceStripeAccount' => \App\Http\Middleware\ForceStripeAccount::class,
     ];
 }

@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class StripeConnectController extends Controller
 {
+    public function connect()
+    {
+        return view('backstage.stripe-connect.connect');
+    }
+
     //
     public function authorizeRedirect()
     {
@@ -20,9 +25,11 @@ class StripeConnectController extends Controller
                 'client_id' => config('services.stripe.client_id'),
             ]),
         ]);
+        //dd($url);
         return redirect($url);
     }
 
+    
     public function redirect()
     {
         $accessTokeResponse=Zttp::asFormParams()->post('https://connect.stripe.com/oauth/token',[
