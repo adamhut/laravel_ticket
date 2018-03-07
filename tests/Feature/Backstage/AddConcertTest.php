@@ -44,6 +44,7 @@ class AddConcertTest extends TestCase
 
         $response = $this->actingAs($user)->get('/backstage/concerts/new');
 
+        
         $response->assertStatus(200);
     }
 

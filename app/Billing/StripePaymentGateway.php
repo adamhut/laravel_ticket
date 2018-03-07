@@ -19,19 +19,24 @@ class StripePaymentGateway implements PaymentGateway
         $this->apiKey = $apiKey;
     }
 
-    public function charge($amount,$token)
+    public function charge($amount,$token,$destinationAccountId)
     {
         try{
             $stripeCharge = \Stripe\Charge::create([
                 "amount" => $amount,
                 "currency" => "usd",
                 "source" => $token, // obtained with Stripe.js
+                "destination" =>[
+                    'account'   => $destinationAccountId,
+                    'amount'    => $amount * 0.9,
+                ]
                 //"description" => "Charge for matthew.smith@example.com"
             ],$this->apiKey);
 
             return new Charge([
                 'amount' => $stripeCharge['amount'],
                 'card_last_four' => $stripeCharge['source']['last4'],
+                'destination' => $destinationAccountId
             ]);
 
         }catch(InvalidRequest $e)
@@ -67,10 +72,10 @@ class StripePaymentGateway implements PaymentGateway
 
     private function lastCharge()
     {
-        return \Stripe\Charge::all(
+        return array_first(\Stripe\Charge::all(
             ['limit'=>1],
             ['api_key'=>$this->apiKey]
-        )['data'][0];
+        )['data']);
     }
 
     private function newChargesSince($charge=null)

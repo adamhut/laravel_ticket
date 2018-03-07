@@ -3,13 +3,14 @@
 namespace Tests\Feature;
 
 use Mockery;
+use App\User;
 use App\Concert;
 use Tests\TestCase;
 use App\Facades\TicketCode;
 use App\Billing\PaymentGateway;
 use App\Billing\FakePaymentGateway;
-use App\Mail\OrderConfirmationEmail;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmationEmail;
 use App\Facades\OrderConfirmationNumber;
 use App\OrderConfirmationNumberGenerator;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -72,9 +73,11 @@ class PurchaseTicketsTest extends TestCase
             'ticket_quantity'=>3,
         ]);
         */
+        $user = factory(User::class)->create(['stripe_acct_id'=>'test_acct_1234']);
         $concert = \ConcertFactory::createPublished([
             'ticket_price'=>3250,
             'ticket_quantity'=>3,
+            'user_id'   =>$user->id,
         ]);
         $concert->publish();
         //Act
@@ -104,7 +107,7 @@ class PurchaseTicketsTest extends TestCase
 
 
         //Make sure the customer was Charged the correct amount
-        $this->assertEquals(9750,$this->paymentGateway->totalCharges());
+        $this->assertEquals(9750,$this->paymentGateway->totalChargesFor('test_acct_1234'));
 
         //Make sure that an order existes for this customer
         $this->assertTrue($concert->hasOrderFor('john@example.com'));

@@ -66,7 +66,7 @@ class ConcertOrdersController extends Controller
             //$this->paymentGateway->charge( $reservation->totalCost(),request('payment_token'));
 
             //create an order for those Tickets
-            $order = $reservation->complete($this->paymentGateway,request('payment_token'));
+            $order = $reservation->complete($this->paymentGateway,request('payment_token'),$concert->user->stripe_account_id);
 
             Mail::to($order->email)->send(new OrderConfirmationEmail($order));
 

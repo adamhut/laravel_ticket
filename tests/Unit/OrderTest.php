@@ -68,7 +68,7 @@ class OrderTest extends TestCase
     {
         $this->expectException(ModelNotFoundException::class);
         // try{
-            Order::findByConfirmationNumber('NONEEXISTENTCONFIRMATIONBNUMBER');
+        Order::findByConfirmationNumber('NONEEXISTENTCONFIRMATIONBNUMBER');
         //}catch(ModelNotFoundException $e)
         //{
         //    return ;
